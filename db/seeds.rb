@@ -28,13 +28,13 @@ Event.create!(event_name: "V's Birthday Party", event_date: "2020-01-26", event_
 puts 'create Event - End'
 
 puts 'create EventGiftGetter - Start'
-EventGiftGetter.new(user_id: 4, event_id: 1)
+EventGiftGetter.create!(user_id: 4, event_id: 1)
 puts 'create EventGiftGetter - End'
 
 puts 'create EventGiftGiver - Start'
-EventGiftGiver.create(user_id: 1, event_id: 1)
-EventGiftGiver.create(user_id: 3, event_id: 1)
-EventGiftGiver.create(user_id: 5, event_id: 1)
+EventGiftGiver.create!(user_id: 1, event_id: 1)
+EventGiftGiver.create!(user_id: 3, event_id: 1)
+EventGiftGiver.create!(user_id: 5, event_id: 1)
 puts 'create EventGiftGiver - End'
 
 puts 'create WishList - Start'

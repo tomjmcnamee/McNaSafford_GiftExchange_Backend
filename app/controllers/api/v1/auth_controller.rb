@@ -1,22 +1,40 @@
 class Api::V1::AuthController < ApplicationController
     def create
-        # byebug
         token = request.headers["Authorization"]
-        userId = JWT.decode(token, ENV["JWTTokenKey"])[0]["userObj"]
-        userObj = UserAccount.find(userId)
+        userId = JWT.decode(token, ENV["JWTTokenKey"])[0]["loggedInAcct"]
+        loggedInAcct = Account.find(userId)
+        primaryUser = User.find_by(account_id: loggedInAcct.id)
+        managingUsers = User.where(managing_account_id: loggedInAcct.id)
+        activeUserWishList = WishList.where(user_id: primaryUser.id)
+        activeUserManagedEvents = Event.where(event_managing_user_id: primaryUser.id)
+        ##These next three builds the list of Event Objects for which the user is a Gift Giver, and their Getters
+        activeUserGiftGiver_obj_arr = EventGiftGiver.where(user_id: primaryUser.id).select(:event_id)
+        activeUserGiftGiverEventIDs = activeUserGiftGiver_obj_arr.map { |event| event.event_id }
+        activeUserGiverEventOBJsArr = Event.where(id: activeUserGiftGiverEventIDs)
+        activeUserGiverEventsGetterOBJsArr = EventGiftGetter.where(event_id: activeUserGiftGiverEventIDs)
         
-        render json: {}
+        
+        render json: {loggedInAcct: loggedInAcct, token: token, primaryUser: primaryUser, managingUsers: managingUsers, activeUserWishList: activeUserWishList, activeUserManagedEvents: activeUserManagedEvents, activeUserGiverEventOBJsArr: activeUserGiverEventOBJsArr, activeUserGiverEventsGetterOBJsArr: activeUserGiverEventsGetterOBJsArr}
+
 
     end
 
     def login
-        userObj = UserAccount.find_by(email_address: params["auth"]["email_address"])
-        if userObj && userObj.authenticate(params["auth"]["password"])
-            loggedInUserSupportedCampaignObjsArr = Campaign.where(id: CampaignContribution.where(account_id: userObj.id).select(:campaign_id))
-            campaignContributionsOjbsArr = CampaignContribution.where(account_id: userObj.id)
-            token = JWT.encode({userObj: userObj.id}, ENV["JWTTokenKey"])
-            favoritedCampaigns = FavoritedCampaign.where(user_account_id: userObj.id)
-            render json: {userObj: userObj, token: token, loggedInUserSupportedCampaignObjsArr: loggedInUserSupportedCampaignObjsArr, campaignContributionsOjbsArr: campaignContributionsOjbsArr, favoritedCampaigns: favoritedCampaigns}
+        loggedInAcct = Account.find_by(email_address: params["auth"]["email_address"].downcase)
+        if loggedInAcct && loggedInAcct.authenticate(params["auth"]["password"])
+            token = JWT.encode({loggedInAcct: loggedInAcct.id}, ENV["JWTTokenKey"])
+            primaryUser = User.find_by(account_id: loggedInAcct.id)
+            managingUsers = User.where(managing_account_id: loggedInAcct.id)
+            activeUserWishList = WishList.where(user_id: primaryUser.id)
+            activeUserManagedEvents = Event.where(event_managing_user_id: primaryUser.id)
+            ##These next three builds the list of Event Objects for which the user is a Gift Giver, and their Getters
+            activeUserGiftGiver_obj_arr = EventGiftGiver.where(user_id: primaryUser.id).select(:event_id)
+            activeUserGiftGiverEventIDs = activeUserGiftGiver_obj_arr.map { |event| event.event_id }
+            activeUserGiverEventOBJsArr = Event.where(id: activeUserGiftGiverEventIDs)
+            activeUserGiverEventsGetterOBJsArr = EventGiftGetter.where(event_id: activeUserGiftGiverEventIDs)
+            
+            
+            render json: {loggedInAcct: loggedInAcct, token: token, primaryUser: primaryUser, managingUsers: managingUsers, activeUserWishList: activeUserWishList, activeUserManagedEvents: activeUserManagedEvents, activeUserGiverEventOBJsArr: activeUserGiverEventOBJsArr, activeUserGiverEventsGetterOBJsArr: activeUserGiverEventsGetterOBJsArr}
         else
             render json: {status: "error", code: 300, message: "That Email and PW combination does not exist"}
         end
