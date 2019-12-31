@@ -1,3 +1,12 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+
+
+  namespace :api do
+    namespace :v1 do
+      get 'wishlist/:userid', to: 'wish_list#showallforuser'
+      get '/autologin', to: "auth#create"
+      post '/login', to:"auth#login"
+      post '/user_accounts', to:"user_account#create"
+    end
+  end
 end
