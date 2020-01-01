@@ -1,14 +1,21 @@
 class Api::V1::WishListController < ApplicationController
     def create
-        userObj = UserAccount.new(user_account_params)
-        if userObj.save
-            token = JWT.encode({userObj: userObj.id}, ENV["JWTTokenKey"])
-            loggedInUserSupportedCampaignObjsArr = Campaign.where(id: CampaignContribution.where(account_id: userObj.id).select(:campaign_id))
-            campaignContributionsOjbsArr = CampaignContribution.where(account_id: userObj.id)
-            favoritedCampaigns = FavoritedCampaign.where(user_account_id: userObj.id)
-            render json: {userObj: userObj, token: token, loggedInUserSupportedCampaignObjsArr: loggedInUserSupportedCampaignObjsArr, campaignContributionsOjbsArr: campaignContributionsOjbsArr, favoritedCampaigns: favoritedCampaigns}
+        newWishlistItem = WishList.new(wishlistItem_params)
+        newWishlistItem.user_id = params[:userID]
+        if newWishlistItem.save
+            activeUserWishList = WishList.where(user_id: params[:userID])
+            render json: { activeUserWishList: activeUserWishList }
         else
-            render json: {errors: userObj.errors.full_messages}
+            render json: {errors: newWishlistItem.errors.full_messages}
+        end
+    end
+
+    def destroy
+        if WishList.find(params[:wishlistItemID]).destroy
+            activeUserWishList = WishList.where(user_id: params[:userID])
+            render json: { activeUserWishList: activeUserWishList }
+        else
+            render json: {errors: newWishlistItem.errors.full_messages}
         end
     end
 
@@ -20,8 +27,8 @@ class Api::V1::WishListController < ApplicationController
 
 private
 
-# def user_account_params
-#     params.require(:user_account).permit(:first_name, :last_name, :street, :city, :state, :zip, :country, :cell_phone, :email_address, :password)
-# end
+def wishlistItem_params
+    params.require(:wishlistItem).permit(:gift_name, :amazon_url, :gift_image, :status)
+end
     
 end

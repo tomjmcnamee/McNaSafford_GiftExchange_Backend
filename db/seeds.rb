@@ -38,6 +38,6 @@ EventGiftGiver.create!(user_id: 5, event_id: 1)
 puts 'create EventGiftGiver - End'
 
 puts 'create WishList - Start'
-WishList.create!(user_id: 4, gift_name: "Alexa Dot", amazon_url: "https://www.amazon.com/dp/B07FZ8S74R/ref=ods_gw_d_ha_h1_cpt_party_122919?pf_rd_p=626cbc60-0211-45bd-bbea-083ff29ec327&pf_rd_r=PBZ78KJCN940QHCW5XMW")
-WishList.create!(user_id: 4, gift_name: "Marbles", amazon_url: "https://www.amazon.com/Marbles-Players-Shooters-Assorted-Finishes/dp/B01CZ0IQ3K/ref=sr_1_2?keywords=marbles&qid=1577768249&s=amazon-devices&sr=1-2-catcorr")
+WishList.create!(user_id: 4, gift_name: "Alexa Dot", amazon_url: "https://www.amazon.com/dp/B07FZ8S74R/ref=ods_gw_d_ha_h1_cpt_party_122919?pf_rd_p=626cbc60-0211-45bd-bbea-083ff29ec327&pf_rd_r=PBZ78KJCN940QHCW5XMW", gift_image: "https://images-na.ssl-images-amazon.com/images/I/6182S7MYC2L._AC_SL1000_.jpg")
+WishList.create!(user_id: 4, gift_name: "Marbles", amazon_url: "https://www.amazon.com/Marbles-Players-Shooters-Assorted-Finishes/dp/B01CZ0IQ3K/ref=sr_1_2?keywords=marbles&qid=1577768249&s=amazon-devices&sr=1-2-catcorr", gift_image: "https://images-na.ssl-images-amazon.com/images/I/81OSKE1n6gL._AC_SL1500_.jpg")
 puts 'create WishList - End'
