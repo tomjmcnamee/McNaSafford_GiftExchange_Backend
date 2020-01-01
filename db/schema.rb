@@ -63,12 +63,14 @@ ActiveRecord::Schema.define(version: 2019_12_30_050317) do
 
   create_table "wish_lists", force: :cascade do |t|
     t.bigint "user_id", null: false
+    t.bigint "giving_user_id"
     t.string "gift_name"
     t.string "amazon_url"
     t.string "gift_image"
     t.string "status", default: "added"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["giving_user_id"], name: "index_wish_lists_on_giving_user_id"
     t.index ["user_id"], name: "index_wish_lists_on_user_id"
   end
 
@@ -80,4 +82,5 @@ ActiveRecord::Schema.define(version: 2019_12_30_050317) do
   add_foreign_key "users", "accounts"
   add_foreign_key "users", "accounts", column: "managing_account_id"
   add_foreign_key "wish_lists", "users"
+  add_foreign_key "wish_lists", "users", column: "giving_user_id"
 end
