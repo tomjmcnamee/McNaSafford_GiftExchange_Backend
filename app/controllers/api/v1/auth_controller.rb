@@ -2,20 +2,20 @@ class Api::V1::AuthController < ApplicationController
     def create
         token = request.headers["Authorization"]
         userId = JWT.decode(token, ENV["JWTTokenKey"])[0]["loggedInAcct"]
-        loggedInAcct = Account.find(userId)
-        primaryUser = User.find_by(account_id: loggedInAcct.id)
-        managingUsers = User.where(managing_account_id: loggedInAcct.id)
-        activeUserWishList = WishList.where(user_id: primaryUser.id)
-        activeUserManagedEvents = Event.where(event_managing_user_id: primaryUser.id)
-        ##These next three builds the list of Event Objects for which the user is a Gift Giver, and their Getters
-        activeUserGiftGiver_obj_arr = EventGiftGiver.where(user_id: primaryUser.id).select(:event_id)
-        activeUserGiftGiverEventIDs = activeUserGiftGiver_obj_arr.map { |event| event.event_id }
-        activeUserGiverEventOBJsArr = Event.where(id: activeUserGiftGiverEventIDs)
-        activeUserGiverEventsGetterOBJsArr = EventGiftGetter.where(event_id: activeUserGiftGiverEventIDs)
-        
-        
-        render json: {loggedInAcct: loggedInAcct, token: token, primaryUser: primaryUser, managingUsers: managingUsers, activeUserWishList: activeUserWishList, activeUserManagedEvents: activeUserManagedEvents, activeUserGiverEventOBJsArr: activeUserGiverEventOBJsArr, activeUserGiverEventsGetterOBJsArr: activeUserGiverEventsGetterOBJsArr}
-
+        if loggedInAcct = Account.find(userId)
+            primaryUser = User.find_by(account_id: loggedInAcct.id)
+            managingUsers = User.where(managing_account_id: loggedInAcct.id)
+            activeUserWishList = WishList.where(user_id: primaryUser.id)
+            activeUserManagedEvents = Event.where(event_managing_user_id: primaryUser.id)
+            ##These next three builds the list of Event Objects for which the user is a Gift Giver, and their Getters
+            activeUserGiftGiver_obj_arr = EventGiftGiver.where(user_id: primaryUser.id).select(:event_id)
+            activeUserGiftGiverEventIDs = activeUserGiftGiver_obj_arr.map { |event| event.event_id }
+            activeUserGiverEventOBJsArr = Event.where(id: activeUserGiftGiverEventIDs)
+            activeUserGiverEventsGetterOBJsArr = EventGiftGetter.where(event_id: activeUserGiftGiverEventIDs)
+            render json: {loggedInAcct: loggedInAcct, token: token, primaryUser: primaryUser, managingUsers: managingUsers, activeUserWishList: activeUserWishList, activeUserManagedEvents: activeUserManagedEvents, activeUserGiverEventOBJsArr: activeUserGiverEventOBJsArr, activeUserGiverEventsGetterOBJsArr: activeUserGiverEventsGetterOBJsArr}
+        else
+            render json: {status: "error", code: 300, message: "Cannot autologin, bad token"}
+        end
 
     end
 

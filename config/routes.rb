@@ -6,8 +6,9 @@ Rails.application.routes.draw do
       get 'wishlist/:userid', to: 'wish_list#showallforuser'
       get '/autologin', to: "auth#create"
       get '/switchUser/:userid', to: "user#switchUser"
+      get '/event', to: "event#eventGetterWishlists"
       post '/login', to:"auth#login"
-      post '/user_accounts', to:"user_account#create"
+      post '/accounts', to:"account#create"
       post '/wishlist', to: 'wish_list#create'
       delete '/wishlist', to: 'wish_list#destroy'
     end

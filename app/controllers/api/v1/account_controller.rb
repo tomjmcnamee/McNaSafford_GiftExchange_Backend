@@ -1,14 +1,14 @@
 class Api::V1::AccountController < ApplicationController
     def create
-        userObj = UserAccount.new(user_account_params)
-        if userObj.save
-            token = JWT.encode({userObj: userObj.id}, ENV["JWTTokenKey"])
-            loggedInUserSupportedCampaignObjsArr = Campaign.where(id: CampaignContribution.where(account_id: userObj.id).select(:campaign_id))
-            campaignContributionsOjbsArr = CampaignContribution.where(account_id: userObj.id)
-            favoritedCampaigns = FavoritedCampaign.where(user_account_id: userObj.id)
-            render json: {userObj: userObj, token: token, loggedInUserSupportedCampaignObjsArr: loggedInUserSupportedCampaignObjsArr, campaignContributionsOjbsArr: campaignContributionsOjbsArr, favoritedCampaigns: favoritedCampaigns}
+        newAcct = Account.new(account_params)
+        if newAcct.save
+            token = JWT.encode({userObj: newAcct.id}, ENV["JWTTokenKey"])
+            newUser = User.new(user_params)
+            newUser.account_id = newAcct.id
+            newUser.save
+            render json: {loggedInAcct: newAcct, token: token, primaryUser: newUser}
         else
-            render json: {errors: userObj.errors.full_messages}
+            render json: {errors: newAcct.errors.full_messages}
         end
     end
 
@@ -27,8 +27,12 @@ class Api::V1::AccountController < ApplicationController
 
 private
 
-def user_account_params
-    params.require(:user_account).permit(:first_name, :last_name, :street, :city, :state, :zip, :country, :cell_phone, :email_address, :password)
+def user_params
+    params.require(:user).permit(:first_name, :last_name, :dob)
+end
+
+def account_params
+    params.require(:account).permit(:email_address, :password)
 end
     
 end
