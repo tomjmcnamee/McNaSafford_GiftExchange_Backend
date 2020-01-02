@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       post '/event', to: "event#create"
       post '/login', to:"auth#login"
       post '/accounts', to:"account#create"
+      post '/user', to:"user#create"
       post '/wishlist', to: 'wish_list#create'
       delete '/wishlist', to: 'wish_list#destroy'
     end

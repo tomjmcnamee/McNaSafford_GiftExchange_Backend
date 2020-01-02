@@ -31,6 +31,22 @@ class Api::V1::UserController < ApplicationController
         end
     end
 
-    
+    def create
+        newUser = User.new(user_params)
+        newUser.managing_account_id = params["managing_account_id"]
+        # byebug
+        if newUser.save
+            managingUsers = User.where(managing_account_id: params["managing_account_id"])
+            render json: {managingUsers: managingUsers}
+        else
+            render json: {status: "error", code: 300, message: "There was a problem adding this user"}
+        end
+    end
+
+    private
+
+    def user_params
+        params.require(:user).permit(:first_name, :last_name, :dob, :account_id, :managing_account_id)
+    end
     
 end
