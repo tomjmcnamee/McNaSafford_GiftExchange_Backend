@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       get '/autologin', to: "auth#create"
       get '/switchUser/:userid', to: "user#switchUser"
       get '/event', to: "event#eventGetterWishlists"
+      post '/event', to: "event#create"
       post '/login', to:"auth#login"
       post '/accounts', to:"account#create"
       post '/wishlist', to: 'wish_list#create'
