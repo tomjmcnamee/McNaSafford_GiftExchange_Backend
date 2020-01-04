@@ -4,7 +4,8 @@ class Api::V1::EventGiftGetterController < ApplicationController
         if newGiftGetter.save
             eventGiftGettersIDs = EventGiftGetter.where(event_id: newGiftGetter.event_id).select(:user_id)
             eventGettersUserOBJsArr = User.where(id: eventGiftGettersIDs)
-            render json: {eventGettersUserOBJsArr: eventGettersUserOBJsArr}
+            eventWishLists = WishList.where(user_id: eventGiftGettersIDs)
+            render json: {eventGettersUserOBJsArr: eventGettersUserOBJsArr, eventWishLists:eventWishLists}
         else
             render json: {status: "error", code: 300, message: "There was a problem adding this gift getter"}
         end
