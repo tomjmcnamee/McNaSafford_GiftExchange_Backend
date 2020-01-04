@@ -1,10 +1,12 @@
 class Api::V1::EventController < ApplicationController
-    def eventGetterWishlists
+    def allEventDetails
         eventID = request.headers["EventID"]
         eventGettersUserIDsArr = EventGiftGetter.where(event_id: eventID).select(:user_id)
         eventGettersUserOBJsArr = User.where(id: eventGettersUserIDsArr)
         eventWishLists = WishList.where(user_id: eventGettersUserIDsArr)
-        render json: {eventWishLists: eventWishLists, eventGettersUserOBJsArr: eventGettersUserOBJsArr}
+        eventInviteesIDs = EventGiftGiver.where(event_id: eventID).select(:user_id)
+        eventInviteeObjs = User.where(id: eventInviteesIDs)
+        render json: {eventWishLists: eventWishLists, eventGettersUserOBJsArr: eventGettersUserOBJsArr, eventInviteeObjs: eventInviteeObjs}
     end
 
     def create

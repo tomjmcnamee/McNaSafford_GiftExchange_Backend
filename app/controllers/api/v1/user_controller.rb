@@ -43,6 +43,11 @@ class Api::V1::UserController < ApplicationController
         end
     end
 
+    def index
+        allUsers = User.all.select(:id, :first_name, :last_name)
+        render json: {allUsers: allUsers}
+    end
+
     private
 
     def user_params
