@@ -10,6 +10,20 @@ class Api::V1::WishListController < ApplicationController
         end
     end
 
+    def update
+        # byebug
+        itemToUpdate = WishList.find(params[:itemIDToUpdate])
+        if itemToUpdate.update(status: "marked as purchased", giving_user_id: params[:PurchasingUserID])
+            eventGettersUserIDsArr = EventGiftGetter.where(event_id: params[:ActiveEventId]).select(:user_id)
+            eventGettersUserOBJsArr = User.where(id: eventGettersUserIDsArr)
+            eventWishLists = WishList.where(user_id: eventGettersUserIDsArr)
+            render json: { eventWishLists: eventWishLists }
+        else
+            render json: {errors: newWishlistItem.errors.full_messages}
+        end
+
+    end
+
     def destroy
         if WishList.find(params[:wishlistItemID]).destroy
             activeUserWishList = WishList.where(user_id: params[:userID])

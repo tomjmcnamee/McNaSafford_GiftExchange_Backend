@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       post '/accounts', to:"account#create"
       post '/user', to:"user#create"
       post '/wishlist', to: 'wish_list#create'
+      patch '/wishlist', to: 'wish_list#update'
       delete '/wishlist', to: 'wish_list#destroy'
     end
   end
